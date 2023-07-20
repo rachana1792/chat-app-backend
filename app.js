@@ -2,50 +2,51 @@ const http = require("http");
 const { Server } = require("socket.io");
 const express = require("express");
 const path = require("path");
-const Room = require("./room");
 const cors = require("cors");
 const socketIo = require("socket.io");
+const { addMessage, getMessagesInRoom } = require("./user");
 
 const app = express();
 
 app.use(cors());
 
-
-
-
-// app.use(express.static(path.join(__dirname, "public")));
-
 const server = http.createServer(app);
 
 const socketIO = new Server(server, {
   cors: {
-    origin: 'http://127.0.0.1:5000',
-    methods: ['GET', 'POST'],
+    origin: "http://127.0.0.1:5000",
+    methods: ["GET", "POST"],
   },
 });
 
-// const io = new Server(server);
-
-const room = new Room();
-
-
-socketIO.on('connection', (socket) => {
+socketIO.on("connection", async (socket) => {
   console.log(`${socket.id} user just connected!`);
 
+  socket.on("join-room", (data) => {
+    socket.join(data);
+    socket.to(data.roomId).emit("messageArray", data);
+  });
   //sends the message to all the users on the server
-  socket.on('message', (data) => {
-    socketIO.emit('messageResponse', data);
+  socket.on("message", (data) => {
+    const messages = addMessage(data.roomId, data);
+
+    socketIO.to(data.roomId).emit("messageResponse", messages);
   });
 
-  socket.on('disconnect', () => {
-    console.log('A user disconnected');
+  socket.on("disconnect", () => {
+    console.log("A user disconnected");
   });
 });
 
-app.get('/api', (req, res) => {
+app.get("/api", (req, res) => {
   res.json({
-    message: 'Hello world',
+    message: "Hello world",
   });
+});
+
+app.get("/rooms/:roomId/messages", (req, res) => {
+  const messages = getMessagesInRoom(req.params.roomId);
+  return res.json({ messages });
 });
 
 server.listen(3001, () => {
