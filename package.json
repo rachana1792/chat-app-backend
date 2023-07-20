@@ -1,0 +1,26 @@
+{
+  "name": "chat-app-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "text.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rachana1792/chat-app-backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rachana1792/chat-app-backend/issues"
+  },
+  "homepage": "https://github.com/rachana1792/chat-app-backend#readme",
+  "dependencies": {
+    "@socket.io/admin-ui": "^0.5.1",
+    "express": "^4.18.2",
+    "socket.io": "^4.7.1",
+    "uuid": "^9.0.0"
+  }
+}
